@@ -87,6 +87,32 @@ select * from ex_6
 --cargos e funcionários e calculeSalário Total = SalárioBase+Impostos+Benefícios+VT+VR) 
 create view ex_7
 as
-select 
-from 
-group by
+select nome, SUM(F.salario_base + F.impostos + F.beneficios + F.vt + F.vr) as 'Salario Total' 
+from cargo CA inner join funcionario F on CA.cod_cargo = F.cod_cargo
+group by F.nome
+
+
+
+
+--8 
+--Faça uma view mostre: -Somado Salário Base
+create view 
+as
+select nome, SUM( salario_base) as 'Soma do salario base' 
+from funcionario 
+group by nome
+
+---Soma do Salário Total = SalárioBase+Impostos+Benefícios+VT+VR
+create view
+as 
+select nome, SUM(salario_base + impostos + beneficios + vt + vr) as 'Soma do Salario Total' 
+from funcionario
+group by nome
+
+--Soma do Total de Dias Trabalhados = soma (Dias ÚteisTrabalhados Ano Orçamentário)
+create 
+as
+select nome,SUM(dias_uteis_trabalhados_ano_orcamentario) as 'soma total dos dias trabalhados'
+from funcionario
+group by nome
+
