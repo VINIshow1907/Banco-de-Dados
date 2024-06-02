@@ -1,8 +1,9 @@
 --1 Crie uma view para selecionar todos os dados do Nível, Cargo, Cliente e Região.
-create view ex1
-as
-select 
-from
+Create view ex_1
+As
+Select C.*, N.*, CE.regiao, CA.area, CA.cod_area, CA.quadro, CA.bonus, CA.contratacao
+from nivel N full join cargo CA on N.cod_nivel = CA.cod_nivel full join cliente C  
+	 on CA.cod_cargo = C.cod_cargo_responsavel inner join cep CE on C.cep = CE.cep
 
 --2 Elabora uma view que mostre a quantidade de clientes em cada Região
 create view ex_2
@@ -87,32 +88,39 @@ select * from ex_6
 --cargos e funcionários e calculeSalário Total = SalárioBase+Impostos+Benefícios+VT+VR) 
 create view ex_7
 as
-select nome, SUM(F.salario_base + F.impostos + F.beneficios + F.vt + F.vr) as 'Salario Total' 
-from cargo CA inner join funcionario F on CA.cod_cargo = F.cod_cargo
-group by F.nome
+select F.*, C.area, C.quadro, C.bonus, C.contratacao, N.*, (F.salario_base +
+F.beneficios + F.vt + F.vr + impostos) as 'Total'
+from funcionario F inner join cargo C on F.cod_cargo = C.cod_cargo inner join nivel N on 
+C.cod_nivel = N.cod_nivel
 
-
-
+select * from ex_7
 
 --8 
 --Faça uma view mostre: -Somado Salário Base
-create view 
-as
-select nome, SUM( salario_base) as 'Soma do salario base' 
-from funcionario 
-group by nome
+Create view ex_8a
+As
+Select SUM(salario_base) as 'Soma salário base', SUM(Total) as 'Soma salário total', 
+		SUM(dias_uteis_trabalhados_ano_orcamentario) as 'Soma do total de dias trabalhados', cod_cargo
+From ex_7
+Group by cod_cargo
+
+select * from ex_8a
 
 ---Soma do Salário Total = SalárioBase+Impostos+Benefícios+VT+VR
-create view
-as 
-select nome, SUM(salario_base + impostos + beneficios + vt + vr) as 'Soma do Salario Total' 
-from funcionario
-group by nome
+Create view ex_8b
+As
+Select SUM(E.salario_base) as 'Soma salário base', SUM(E.Total) as 'Soma salário total', 
+		SUM(E.dias_uteis_trabalhados_ano_orcamentario) as 'Soma do total de dias trabalhados', C.regiao
+From ex_7 E inner join cep C on E.cep = C.cep
+Group by C.regiao
+
+select * from ex_8b
 
 --Soma do Total de Dias Trabalhados = soma (Dias ÚteisTrabalhados Ano Orçamentário)
-create 
-as
-select nome,SUM(dias_uteis_trabalhados_ano_orcamentario) as 'soma total dos dias trabalhados'
-from funcionario
-group by nome
+Create view ex_8c
+As
+Select SUM(salario_base) as 'Soma salário base', SUM(Total) as 'Soma salário total', 
+		SUM(dias_uteis_trabalhados_ano_orcamentario) as 'Soma do total de dias trabalhados', descricao_nivel
+From ex_7
+Group by descricao_nivel
 
