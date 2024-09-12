@@ -68,3 +68,89 @@ as
 	set salario_fixo = 2000
 		where codigo_vendedor = 310;
 /*76. Crie um trigger que ao inserir um registro da tabela item do pedido, calcule e armazene o seu subtotal.*/
+create trigger  ex76
+on item_do_pedido
+for insert
+as 
+	declare @numped int, @quant numeric,
+	        @codpro int, @valor numeric;
+ 
+	select @numped=num_pedido, @quant=quantidade,
+	       @codpro=codigo_produto
+
+	from inserted;
+	
+	select @valor=val_unit
+	from produto
+	where codigo_produto=@codpro;
+ 
+	update item_do_pedido
+	set subtotal=@quant*@valor
+	where codigo_produto=@codpro and
+	 num_pedido=@numped;
+ 
+select*
+from item_do_pedido
+ 
+insert into item_do_pedido (num_pedido, codigo_produto, quantidade)
+  values (91, 78,10);
+ 
+/*78. Crie um trigger que ao alterar um registro da tabela item do pedido, calcule e atualize o seu subtotal. */
+create trigger ex78
+on item_do_pedido
+for update
+as 
+	declare @numped int, @quant numeric,
+			@codpro int, @valor numeric;
+
+	select @numped = num_pedido, @quant = quantidade,
+			@codpro = codigo_produto
+
+	from inserted;
+
+	select @valor=val_unit
+	from produto
+	where codigo_produto= @codpro;
+
+	update item_do_pedido
+		set subtotal=@quant*@valor
+		where codigo_produto=@codpro and
+		num_pedido=@numped;
+
+	select * from produto
+
+	insert into item_do_pedido (num_pedido, codigo_produto, quantidade)
+		vaLues (91, 13, 10);
+	
+	update item_do_pedido
+	set quantidade = 5
+	where num_pedido = 91 and codigo_produto = 13;
+
+/*79. Crie um Trigger que ao ser inserido um novo item do pedido atualize o campo quantidade em estoque da tabela produto.*/
+create trigger ex79
+on item_do_pedido
+for insert
+as 
+	declare @numped int, @quant numeric, 
+	@codpro int, @quantest numeric
+
+	select @numped = num_pedido, @quant = quantidade,
+		   @codpro = codigo_produto
+		  
+	from inserted;
+
+	select @quantest=quant_est
+	from produto
+	where codigo_produto= @codpro;
+
+	update produto
+		set quant_est=@quantest - @quant
+		where codigo_produto=@codpro 
+
+	select * from item_do_pedido
+	select * from produto
+
+	insert into item_do_pedido (num_pedido, codigo_produto, quantidade)
+		vaLues (97, 31, 250);
+	
+
