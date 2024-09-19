@@ -153,4 +153,42 @@ as
 	insert into item_do_pedido (num_pedido, codigo_produto, quantidade)
 		vaLues (97, 31, 250);
 	
+/*80. Crie um Trigger que ao ser alterado um item do pedido atualize
+o campo quantidade em estoque da tabela produto*/
+create trigger ex80
+on item_do_pedido
+for update
+as 
+declare @codproduton int, @codprodutoa int,
+		@quantidaden numeric(15,2), @quantidadea numeric(15,2);
+
+/*seleciono o código do produto e a quantidade atualizada*/
+select @codproduton = codigo_produto, @quantidadea = quantidade
+from inserted;
+
+/*Seleciono o código do produto e a quantidade antiga*/
+select @codprodutoa= codigo_produto, @quantidadea=quantidade
+from deleted;
+
+/*atualizo o estoque*/
+--retorno a quantidade pedida antiga para o produto anterior
+	update produto
+		set quant_est= quant_est-@quantidaden
+		where codigo_produto= @codproduton;
+
+/*===========================================
+	3º Testando o Trigger
+======================================
+*/
+--num_pedido --> 121
+--cod prod --> 25
+
+select * from item_do_pedido where num_pedido = 121
+select * from produto where codigo_produto =25
+
+update item_do_pedido
+	set quantidade=250
+	where num_pedido=97 and codigo_produto=31
+
+	select * from item_do_pedido
 
